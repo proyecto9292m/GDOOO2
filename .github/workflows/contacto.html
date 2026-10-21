@@ -119,4 +119,76 @@
 
   <main>
     <h1>Contáctanos</h1>
-    <p class="intro">¿Tienes dudas, sugerencias o encontraste un error en nuestra guía? Escríbenos
+    <p class="intro">¿Tienes dudas, sugerencias o encontraste un error en nuestra guía? Escríbenos. Respondemos en un plazo de 2 a 3 días hábiles.</p>
+
+    <div class="caja">
+      <h2>📬 Formulario de contacto</h2>
+      <p>Los campos marcados con * son obligatorios.</p>
+      <form action="#" method="post">
+        <div>
+          <label for="nombre">Nombre *</label>
+          <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre">
+        </div>
+        <div>
+          <label for="email">Correo electrónico *</label>
+          <input type="email" id="email" name="email" required placeholder="tucorreo@ejemplo.com">
+        </div>
+        <div>
+          <label for="asunto">Asunto *</label>
+          <input type="text" id="asunto" name="asunto" required placeholder="Motivo de tu mensaje">
+        </div>
+        <div>
+          <label for="mensaje">Mensaje *</label>
+          <textarea id="mensaje" name="mensaje" required placeholder="Escribe tu mensaje aquí..."></textarea>
+        </div>
+        <button type="submit">Enviar mensaje</button>
+      </form>
+      <p style="margin-top:14px;font-size:.85rem;color:#718096;">Este formulario es demostrativo. Para activarlo, conecta un servicio de envío de correo o backend.</p>
+    </div>
+
+    <div class="caja">
+      <h2>📧 Correo directo</h2>
+      <p>También puedes escribirnos a: <strong>contacto@previenegas.example</strong></p>
+      <p>Este es un proyecto educativo sin fines de lucro.</p>
+    </div>
+
+    <div class="caja">
+      <h2>🚨 Emergencias reales</h2>
+      <p>Si tienes una fuga de gas o una emergencia, <strong>no uses este formulario</strong>. Llama de inmediato a tu empresa de gas o a los servicios de emergencia locales (bomberos, línea 123 según tu país).</p>
+    </div>
+  </main>
+
+  <footer>
+    <p><strong>PrevieneGas</strong> — Educación para manipular gases en casa.</p>
+    <div class="enlaces-legales">
+      <a href="index.html">Inicio</a>
+      <a href="politicas.html">Privacidad</a>
+      <a href="cookies.html">Cookies</a>
+    </div>
+    <p style="margin-top:10px;font-size:.8rem;opacity:.75;">Sitio educativo sin fines de lucro.</p>
+  </footer>
+
+</div>
+
+<script>
+  (function(){
+    const decision = localStorage.getItem('previenegas_cookies');
+    const overlay = document.getElementById('cookie-overlay');
+    const aviso = document.getElementById('aviso-cookies');
+    const contenido = document.getElementById('contenidoPrincipal');
+    const btnAceptar = document.getElementById('btn-aceptar-cookies');
+    const btnRechazar = document.getElementById('btn-rechazar-cookies');
+    function revelar(){
+      document.body.classList.remove('bloqueado');
+      if(overlay) overlay.style.display='none';
+      if(aviso) aviso.style.display='none';
+      if(contenido) contenido.style.display='block';
+    }
+    if(decision) revelar();
+    btnAceptar.addEventListener('click', () => { localStorage.setItem('previenegas_cookies','aceptadas'); revelar(); });
+    btnRechazar.addEventListener('click', () => { localStorage.setItem('previenegas_cookies','rechazadas'); revelar(); });
+  })();
+</script>
+
+</body>
+</html>
