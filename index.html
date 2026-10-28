@@ -312,14 +312,25 @@
 </div><!-- /#contenidoPrincipal -->
 
 <script>
-  // ===== COOKIES: bloqueo inicial y decisión =====
+  // ===== COOKIES: el banner SIEMPRE aparece en cada visita/recarga =====
   (function(){
-    const decision = localStorage.getItem('previenegas_cookies');
     const overlay = document.getElementById('cookie-overlay');
     const aviso = document.getElementById('aviso-cookies');
     const contenido = document.getElementById('contenidoPrincipal');
     const btnAceptar = document.getElementById('btn-aceptar-cookies');
     const btnRechazar = document.getElementById('btn-rechazar-cookies');
+
+    // Limpiamos cualquier decisión guardada previamente (por versiones anteriores)
+    try {
+      localStorage.removeItem('previenegas_cookies');
+      sessionStorage.removeItem('previenegas_cookies');
+    } catch(e){}
+
+    // Siempre mostramos el banner y bloqueamos el contenido al cargar
+    document.body.classList.add('bloqueado');
+    if(overlay) overlay.style.display = 'block';
+    if(aviso) aviso.style.display = 'block';
+    if(contenido) contenido.style.display = 'none';
 
     function revelar(){
       document.body.classList.remove('bloqueado');
@@ -328,16 +339,11 @@
       if(contenido) contenido.style.display = 'block';
     }
 
-    if(decision){
-      revelar();
-    }
-
+    // NO guardamos la decisión: así el banner siempre vuelve a salir
     btnAceptar.addEventListener('click', () => {
-      localStorage.setItem('previenegas_cookies', 'aceptadas');
       revelar();
     });
     btnRechazar.addEventListener('click', () => {
-      localStorage.setItem('previenegas_cookies', 'rechazadas');
       revelar();
     });
 
@@ -350,6 +356,14 @@
         btnMenu.setAttribute('aria-expanded', abierto);
       });
     }
+
+    // Si el navegador restaura la página desde caché (bfcache), recargamos
+    // para que el banner vuelva a aparecer también al usar atrás/adelante
+    window.addEventListener('pageshow', function(e){
+      if(e.persisted){
+        location.reload();
+      }
+    });
   })();
 </script>
 
